@@ -1,0 +1,147 @@
+<div class="container">
+//This line creates a div element with the class "container", 
+which will be used as a container for the editor.
+
+
+
+<button id="bold" class="option-button format">
+//This line creates a button element with the id "bold" and 
+the classes "option-button" and "format". This button will be used 
+to bold selected text in the editor.
+
+
+
+<i class="fa-solid fa-bold"></i>
+//This line creates an i element with the classes "fa-solid" and "fa-bold", 
+which will display a bold icon from the Font Awesome icon library.
+
+
+
+<button id="superscript" class="option-button script">
+//This line creates a button element with the id "superscript" and 
+the classes "option-button" and "script". This button will 
+be used to superscript selected text in the editor.
+
+
+
+<button id="insertOrderedList" class="option-button">
+//This line creates a button element with the id "insertOrderedList" 
+and the class "option-button". This button will be used to create an 
+ordered list in the editor.
+
+
+
+
+
+
+
+
+// Query selectors to select HTML elements
+let optionsButtons = document.querySelectorAll(".option-button");
+let advancedOptionButton = document.querySelectorAll(".adv-option-button");
+let fontName = document.getElementById("fontName");
+let fontSizeRef = document.getElementById("fontSize");
+let writingArea = document.getElementById("text-input");
+let linkButton = document.getElementById("createLink");
+let alignButtons = document.querySelectorAll(".align");
+let spacingButtons = document.querySelectorAll(".spacing");
+let formatButtons = document.querySelectorAll(".format");
+let scriptButtons = document.querySelectorAll(".script");
+
+// An array of font names to be used in the font dropdown menu
+let fontList = [
+    "Arial",
+    "Verdana",
+    "Times New Roman",
+    "Garamond",
+    "Georgia",
+    "Courier New",
+    "Cursive",
+];
+
+// Function to initialize the editor
+const intializer = () => {
+    highlighter(alignButtons, true);
+    highlighter(spacingButtons, true);
+    highlighter(formatButtons, false);
+    highlighter(scriptButtons, true);
+
+    fontList.map((value) => {
+        let option = document.createElement("option");
+        option.value = value;
+        option.innerHTML = value;
+        fontName.appendChild(option);
+    });
+
+    for (let i = 1; i <= 7; i++) {
+        let option = document.createElement("option");
+        option.value = i;
+        option.innerHTML = i;
+        fontSizeRef.appendChild(option);
+    }
+
+    fontSizeRef.value = 3;
+};
+
+// Function to modify the text in the editor
+const modifyText = (command, defaultUi, value) => {
+    document.execCommand(command, defaultUi, value);
+};
+
+// Event listener for the option buttons
+optionsButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+        modifyText(button.id, false, null);
+    });
+});
+
+// Event listener for the advanced option buttons
+advancedOptionButton.forEach((button) => {
+    button.addEventListener("change", () => {
+        modifyText(button.id, false, button.value);
+    });
+});
+
+// Event listener for the link button
+linkButton.addEventListener("click", () => {
+    let userLink = prompt("Enter a URL?");
+    if (/http/i.test(userLink)) {
+        modifyText(linkButton.id, false, userLink);
+    } else {
+        userLink = "http://" + userLink;
+        modifyText(linkButton.id, false, userLink);
+    }
+});
+
+// Function to highlight the active button
+const highlighter = (className, needsRemoval) => {
+    className.forEach((button) => {
+        button.addEventListener("click", () => {
+            if (needsRemoval) {
+                let alreadyActive = false;
+                if (button.classList.contains("active")) {
+                    alreadyActive = true;
+                }
+                highlighterRemover(className);
+                if (!alreadyActive) {
+                    button.classList.add("active");
+                }
+            } else {
+                button.classList.toggle("active");
+            }
+        });
+    });
+};
+
+// Function to remove the highlight from the button
+const highlighterRemover = (className) => {
+    className.forEach((button) => {
+        button.classList.remove("active");
+    });
+};
+
+// Call the initializer function when the window loads
+window.onload = intializer();
+
+
+
